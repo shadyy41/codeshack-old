@@ -1,0 +1,14 @@
+.logo{
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: var(--logo-size);
+  font-weight: 500;
+  color: var(--primary-light);
+}
+.logo a{
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.logo a span{
+  color: var(--primary-accent);
+}

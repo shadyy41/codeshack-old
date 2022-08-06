@@ -1,0 +1,18 @@
+.wrapper{
+  height: var(--navbar-height);
+  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--v-padding);
+  width: 100%;
+  max-width: 1920px;
+  margin: auto;
+}
+.right{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  gap: 1rem;
+}
