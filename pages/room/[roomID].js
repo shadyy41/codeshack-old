@@ -40,7 +40,10 @@ const Post = () => {
             peerID: userID,
             peer,
           })
-          peers.push(peer);
+          peers.push({
+            peerID: userID,
+            peer
+          });
         })
         setPeers(peers);
       })
@@ -51,8 +54,11 @@ const Post = () => {
           peerID: payload.callerID,
           peer,
         })
-
-        setPeers(users => [...users, peer]);
+        const peerObj = {
+          peer,
+          peerID: payload.callerID
+        }
+        setPeers(users => [...users, peerObj]);
       })
 
       socketRef.current.on("receiving returned signal", payload => {
@@ -110,7 +116,7 @@ function addPeer(incomingSignal, callerID, stream) {
       <video muted ref={userVideo} autoPlay playsInline />
       {peers.map((peer, index) => {
           return (
-            <Video key={index} peer={peer} />
+            <Video key={peer.peerID} peer={peer.peer} />
           );
       })}
     </>
