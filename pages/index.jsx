@@ -3,16 +3,15 @@ import Link from 'next/link'
 import styles from "../styles/page/index.module.css"
 import { useState, useEffect } from 'react'
 import {BsArrowRightShort} from "react-icons/bs"
+import {v4 as uuid} from "uuid"
+import Router from 'next/router'
 
 export default function Home() {
-  const [roomId, setRoomId] = useState('')
-  useEffect(()=>{
-    setRoomId('random jargon')
-  }, [])
-  const handleSubmit=(e)=>{
-    e.preventDefault();
-    console.log("Form submitted")
+  const createRoom=()=>{
+    const room = "room/" + uuid()
+    Router.push(`/${room}`)
   }
+
   return (
     <main className={styles.wrapper}>
       <article className={styles.content}>
@@ -24,13 +23,11 @@ export default function Home() {
         </p>
         <div className={styles.room_form}>
           <input type="text" name="room_name" id="room_name" placeholder='Enter a name for your room'/>
-          <Link href={`/${roomId}`}>
-            <a>
-              <span>
-                Create Room <BsArrowRightShort size={24}/>
-              </span>
-            </a>
-          </Link>
+          <a onClick={createRoom}>
+            <span>
+              Create Room <BsArrowRightShort size={24}/>
+            </span>
+          </a>
         </div>
       </article>
       <div className={styles.image}>

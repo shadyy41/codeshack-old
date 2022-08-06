@@ -52,6 +52,7 @@ a{
 }
 a{
   text-decoration: none;
+  cursor: pointer;
 }
 a:focus, a:active{
   outline: 2px solid var(--primary-accent);
