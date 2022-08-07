@@ -7,6 +7,7 @@ import {MdCallEnd, MdOutlineVideocam, MdOutlineVideocamOff, MdMic, MdMicOff} fro
 import {HiOutlineShare} from "react-icons/hi"
 import toast from "react-hot-toast"
 import {CopyToClipboard} from "react-copy-to-clipboard"
+import Editor from "../../src/components/editor"
 
 
 const Post = () => {
@@ -15,6 +16,7 @@ const Post = () => {
   const [muted, setMuted] = useState(false)
   const [coff, setCoff] = useState(false)
   const [link, setLink] = useState('')
+  const [rID, setRID] = useState('')
   const socketRef = useRef()
   const userVideo = useRef()
   const peerVideo = useRef()
@@ -45,6 +47,7 @@ const Post = () => {
   useEffect(() => {
     if(!router.isReady) return
     const {roomID} = router.query
+    setRID(roomID)
 
     socketRef.current = io.connect("ws://localhost:3001");
 
@@ -164,22 +167,23 @@ const Post = () => {
         <video className={styles.video} muted ref={userVideo} autoPlay playsInline />
         {peer && <video className={styles.video} muted ref={peerVideo} autoPlay playsInline/>}
         <div className={styles.controls}>
-          <span className={`${styles.button} ${coff ? styles.danger : styles.normal}`} onClick={handleCamera}>
+          <button className={`${styles.button} ${coff ? styles.danger : styles.normal}`} onClick={handleCamera}>
             {coff ? <MdOutlineVideocamOff/> : <MdOutlineVideocam/>}
-          </span>
-          <span className={`${styles.button} ${muted ? styles.danger : styles.normal}`} onClick={handleMic}>
+          </button>
+          <button className={`${styles.button} ${muted ? styles.danger : styles.normal}`} onClick={handleMic}>
             {muted ? <MdMicOff/> : <MdMic/>}
-          </span>
+          </button>
           <CopyToClipboard text={link} onCopy={handleShare}>
-            <span className={`${styles.button} ${styles.normal}`}>
+            <button className={`${styles.button} ${styles.normal}`}>
               <HiOutlineShare/>
-            </span>
+            </button>
           </CopyToClipboard>
-          <span className={`${styles.button} ${styles.danger} ${styles.wide}`} onClick={handleLeave}>
+          <button className={`${styles.button} ${styles.danger} ${styles.wide}`} onClick={handleLeave}>
             <MdCallEnd/>
-          </span>
+          </button>
         </div>
       </div>
+      {rID && <Editor roomID={rID}/>}
     </main>
     </>
   )

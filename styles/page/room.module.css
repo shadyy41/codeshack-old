@@ -1,5 +1,6 @@
 .wrapper{
   height: 100%;
+  overflow-y: auto;
   width: 100%;
   display: flex;
   align-items: center;
@@ -24,7 +25,7 @@
   width: 256px;
   height: 192px;
   background-color: var(--secondary-dark);
-  border-radius: 8px;
+  border-radius: 6px;
 }
 .button{
   display: flex;
@@ -36,7 +37,9 @@
   cursor: pointer;
   font-size: 1.3rem;
   transition: background-color 200ms ease-in-out, color 200ms ease-in-out;
+  border: none;
 }
+
 .wide{
   width: 64px;
   border-radius: 16px;

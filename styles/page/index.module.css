@@ -56,8 +56,10 @@
   margin-top: 1rem;
 }
 
-.room_form span{
+.room_form button{
   display: flex;
+  cursor: pointer;
+  border: none;
   align-items: center;
   justify-content: center;
   background-color: var(--primary-accent);
@@ -65,9 +67,7 @@
   width: 256px;
   border-radius: 4px;
   font-weight: 600;
-}
-.room_form span:hover{
-
+  color: var(--secondary-light);
 }
 .room_form input{
   display: block;

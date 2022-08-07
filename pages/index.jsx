@@ -22,11 +22,9 @@ export default function Home() {
         </p>
         <div className={styles.room_form}>
           <input type="text" name="room_name" id="room_name" placeholder='Enter a name for your room'/>
-          <a onClick={createRoom}>
-            <span>
-              Create Room <MdArrowForward size={18}/>
-            </span>
-          </a>
+          <button onClick={createRoom}>
+            Create Room <MdArrowForward size={18}/>
+          </button>
         </div>
       </article>
       <div className={styles.image}>
