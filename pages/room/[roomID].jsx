@@ -4,6 +4,7 @@ import io from "socket.io-client"
 import Peer from "simple-peer"
 import styles from "../../styles/page/room.module.css"
 import {MdCallEnd, MdOutlineVideocam, MdOutlineVideocamOff, MdMic, MdMicOff} from "react-icons/md"
+import toast from "react-hot-toast"
 
 
 
@@ -18,11 +19,26 @@ const Post = () => {
   const peerRef = useRef()
 
   const handleFull =()=>{
-    userVideo.current.srcObject.getTracks().forEach(function(track) {
-      track.stop()
-    })
+    toast.error("Cannot Join: Room Full",  {duration: 5000})
     router.replace("/")
   }
+
+  useEffect(()=>{
+    const handleRouteChange = (url, { shallow }) => {
+      userVideo?.current?.srcObject?.getTracks().forEach(function(track) {
+        track.stop()
+      })
+      socketRef?.current?.disconnect()
+      peerRef?.current?.destroy()
+    }
+
+    router.events.on('routeChangeStart', handleRouteChange)
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange)
+    }
+  }, [])
+
   useEffect(() => {
     if(!router.isReady) return
     const {roomID} = router.query
@@ -60,6 +76,7 @@ const Post = () => {
       })
       peer.on('close', () => {
         setPeer()
+        toast("Peer has left the room",  {duration: 4000})
         peer.destroy()
       })
       peer.on('error', () => {
@@ -99,6 +116,7 @@ const Post = () => {
 
   const handleMic = ()=>{
     const old = muted
+    const msg = old ? "Mic Enabled" : "Mic Disabled"
     if(old){
       userVideo.current.srcObject.getTracks().forEach(function(track) {
         if(track.kind==='audio') track.enabled = true
@@ -109,10 +127,12 @@ const Post = () => {
         if(track.kind==='audio') track.enabled = false
       })
     }
+    toast.success(msg)
     setMuted(!old)
   }
   const handleCamera = ()=>{
     const old = coff
+    const msg = old ? "Camera Enabled" : "Camera Disabled"
     if(old){
       userVideo.current.srcObject.getTracks().forEach(function(track) {
         if(track.kind==='video') track.enabled = true
@@ -123,10 +143,12 @@ const Post = () => {
         if(track.kind==='video') track.enabled = false
       })
     }
+    toast.success(msg)
     setCoff(!old)
   }
   const handleLeave = ()=>{
-    console.log("User Left")
+    router.replace('/')
+    toast.success("Successfully left the room",  {duration: 4000})
   }
 
   /* Remove peer muted option */
