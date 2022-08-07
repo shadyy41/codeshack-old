@@ -1,10 +1,8 @@
 import Image from 'next/image'
-import Link from 'next/link'
 import styles from "../styles/page/index.module.css"
-import { useState, useEffect } from 'react'
-import {BsArrowRightShort} from "react-icons/bs"
 import {v4 as uuid} from "uuid"
 import {useRouter} from 'next/router'
+import { MdArrowForward } from "react-icons/md"
 
 export default function Home() {
   const router = useRouter()
@@ -26,7 +24,7 @@ export default function Home() {
           <input type="text" name="room_name" id="room_name" placeholder='Enter a name for your room'/>
           <a onClick={createRoom}>
             <span>
-              Create Room <BsArrowRightShort size={24}/>
+              Create Room <MdArrowForward size={18}/>
             </span>
           </a>
         </div>

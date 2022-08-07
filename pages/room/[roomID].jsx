@@ -4,8 +4,9 @@ import io from "socket.io-client"
 import Peer from "simple-peer"
 import styles from "../../styles/page/room.module.css"
 import {MdCallEnd, MdOutlineVideocam, MdOutlineVideocamOff, MdMic, MdMicOff} from "react-icons/md"
+import {HiOutlineShare} from "react-icons/hi"
 import toast from "react-hot-toast"
-
+import {CopyToClipboard} from "react-copy-to-clipboard"
 
 
 const Post = () => {
@@ -13,6 +14,7 @@ const Post = () => {
   const [peer, setPeer] = useState()
   const [muted, setMuted] = useState(false)
   const [coff, setCoff] = useState(false)
+  const [link, setLink] = useState('')
   const socketRef = useRef()
   const userVideo = useRef()
   const peerVideo = useRef()
@@ -33,7 +35,8 @@ const Post = () => {
     }
 
     router.events.on('routeChangeStart', handleRouteChange)
-
+    const url = window.location.href
+    setLink(url)
     return () => {
       router.events.off('routeChangeStart', handleRouteChange)
     }
@@ -48,9 +51,9 @@ const Post = () => {
     navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
       socketRef.current.emit("join_room", roomID)
       userVideo.current.srcObject = stream
-      socketRef.current.on("room_full", ()=>{
-        handleFull()
-      })
+
+      socketRef.current.on("room_full", handleFull)
+
       socketRef.current.on("peer", peerID=>{
         const temp = createPeer(peerID, socketRef.current.id, stream)
         peerRef.current = temp
@@ -70,7 +73,6 @@ const Post = () => {
 
   useEffect(()=>{
     if(peer){
-      console.log(peer)
       peer.on('stream', stream => {
         peerVideo.current.srcObject = stream
       })
@@ -148,11 +150,15 @@ const Post = () => {
   }
   const handleLeave = ()=>{
     router.replace('/')
-    toast.success("Successfully left the room",  {duration: 4000})
+    toast.success("Successfully Left The Room",  {duration: 5000})
+  }
+  const handleShare = ()=>{
+    toast.success("Copied To Clipboard")
   }
 
   /* Remove peer muted option */
   return (
+    <>
     <main className={styles.wrapper}>
       <div className={styles.panel}>
         <video className={styles.video} muted ref={userVideo} autoPlay playsInline />
@@ -164,12 +170,18 @@ const Post = () => {
           <span className={`${styles.button} ${muted ? styles.danger : styles.normal}`} onClick={handleMic}>
             {muted ? <MdMicOff/> : <MdMic/>}
           </span>
+          <CopyToClipboard text={link} onCopy={handleShare}>
+            <span className={`${styles.button} ${styles.normal}`}>
+              <HiOutlineShare/>
+            </span>
+          </CopyToClipboard>
           <span className={`${styles.button} ${styles.danger} ${styles.wide}`} onClick={handleLeave}>
             <MdCallEnd/>
           </span>
         </div>
       </div>
     </main>
+    </>
   )
 }
 
