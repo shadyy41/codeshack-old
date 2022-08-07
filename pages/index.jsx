@@ -4,12 +4,13 @@ import styles from "../styles/page/index.module.css"
 import { useState, useEffect } from 'react'
 import {BsArrowRightShort} from "react-icons/bs"
 import {v4 as uuid} from "uuid"
-import Router from 'next/router'
+import {useRouter} from 'next/router'
 
 export default function Home() {
+  const router = useRouter()
   const createRoom=()=>{
     const room = "room/" + uuid()
-    Router.push(`/${room}`)
+    router.push(`/${room}`)
   }
 
   return (
