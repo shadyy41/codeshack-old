@@ -3,11 +3,17 @@ import { useState, useRef, useEffect } from "react"
 import io from "socket.io-client"
 import Peer from "simple-peer"
 import styles from "../../styles/page/room.module.css"
-import {MdCallEnd, MdOutlineVideocam, MdOutlineVideocamOff, MdMic, MdMicOff} from "react-icons/md"
-import {HiOutlineShare} from "react-icons/hi"
+import {MdCallEnd, MdOutlineVideocam, MdOutlineVideocamOff, MdMic, MdMicOff, MdOutlineShare, MdPlayCircle} from "react-icons/md"
 import toast from "react-hot-toast"
 import {CopyToClipboard} from "react-copy-to-clipboard"
 import Editor from "../../src/components/editor"
+import Select from 'react-select'
+
+const languages = [
+  { value: 'cpp', label: 'C++' },
+  { value: 'js', label: 'JavaScript' },
+  { value: 'java', label: 'Java' },
+]
 
 
 const Post = () => {
@@ -17,13 +23,14 @@ const Post = () => {
   const [coff, setCoff] = useState(false)
   const [link, setLink] = useState('')
   const [rID, setRID] = useState('')
+  const [selectedLang, setSelectedLang] = useState(languages[0])
   const socketRef = useRef()
   const userVideo = useRef()
   const peerVideo = useRef()
   const peerRef = useRef()
 
   const handleFull =()=>{
-    toast.error("Cannot Join: Room Full",  {duration: 5000})
+    toast.error("Room is full",  {duration: 5000})
     router.replace("/")
   }
 
@@ -53,9 +60,9 @@ const Post = () => {
 
     navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
       socketRef.current.emit("join_room", roomID)
-      userVideo.current.srcObject = stream
-
       socketRef.current.on("room_full", handleFull)
+
+      if(userVideo.current) userVideo.current.srcObject = stream
 
       socketRef.current.on("peer", peerID=>{
         const temp = createPeer(peerID, socketRef.current.id, stream)
@@ -153,7 +160,7 @@ const Post = () => {
   }
   const handleLeave = ()=>{
     router.replace('/')
-    toast.success("Successfully Left The Room",  {duration: 5000})
+    toast("You left the room",  {duration: 5000})
   }
   const handleShare = ()=>{
     toast.success("Copied To Clipboard")
@@ -164,6 +171,18 @@ const Post = () => {
     <>
     <main className={styles.wrapper}>
       <div className={styles.panel}>
+        <div className={styles.submit}>
+          <Select
+            defaultValue={selectedLang}
+            onChange={setSelectedLang}
+            options={languages}
+            className="react-select-container"
+            classNamePrefix="react-select"
+          />
+          <button className={`${styles.submit_button}`}>
+            <MdPlayCircle/> Run Code
+          </button>
+        </div>
         <video className={styles.video} muted ref={userVideo} autoPlay playsInline />
         {peer && <video className={styles.video} muted ref={peerVideo} autoPlay playsInline/>}
         <div className={styles.controls}>
@@ -175,7 +194,7 @@ const Post = () => {
           </button>
           <CopyToClipboard text={link} onCopy={handleShare}>
             <button className={`${styles.button} ${styles.normal}`}>
-              <HiOutlineShare/>
+              <MdOutlineShare/>
             </button>
           </CopyToClipboard>
           <button className={`${styles.button} ${styles.danger} ${styles.wide}`} onClick={handleLeave}>

@@ -8,6 +8,7 @@ class MyDocument extends Document {
             <Html>
                 <Head/>
                 <head>
+                    <link rel="preload" href="/MonoLisa-Regular.otf" as="font" crossOrigin="anonymous" />
                     <style>
                         {loader}
                     </style>

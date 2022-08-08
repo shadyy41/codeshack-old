@@ -1,4 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Josefin+Sans:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;500&display=swap');
+
+@font-face {
+  font-family: monalisa;
+  src: url('../public/MonoLisa-Regular.otf');
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -31,7 +37,7 @@ a{
 :root{
   --primary-dark: #10141c;
   --secondary-dark: #1d2533;
-  --tertiary-dark: #a0aec1;
+  --tertiary-dark: #293241;
   --primary-light: #fbf8f8;
   --secondary-light: #e2e8f0;
   --primary-accent: #3f8ed0;
@@ -40,6 +46,7 @@ a{
   --navbar-height: 72px;
   --logo-size: 1.7rem;
   --v-padding: 4rem;
+  color-scheme: dark;
   
   background-color: var(--primary-dark);
   color: var(--secondary-light);
@@ -58,7 +65,7 @@ a:focus, a:active{
   outline: 2px solid var(--primary-accent);
   border-radius: 4px;
 }
-input:focus, input:active{
+input:focus, input:active, select:focus, select:active{
   outline: 2px solid var(--primary-accent);
   border-radius: 4px;
 }
@@ -86,4 +93,51 @@ a:hover{
 }
 .button_colored a:hover {
   color: var(--primary-dark);
+}
+/* React Select Styles */
+.react-select-container{
+  flex: 1 1 0;
+}
+.react-select__control--is-focused{
+  box-shadow: 0 0 0 2px var(--primary-accent) !important;
+}
+.react-select__control {
+  background-color: var(--primary-dark) !important;
+  border-color: var(--tertiary-dark) !important;
+  transition: none !important;
+  cursor: pointer !important;
+  color: white !important;
+}
+.react-select__input-container{
+  cursor: pointer !important;
+  color: var(--secondary-light) !important;
+}
+.react-select__menu {
+  background-color: var(--primary-dark) !important;
+  color: var(--secondary-light) !important;
+  border: 1px solid var(--tertiary-dark);
+}
+.react-select__option{
+  font-size: 0.9rem !important;
+  font-weight: 500;
+  background-color: var(--primary-dark) !important;
+  cursor: pointer !important;
+}
+.react-select__option:hover {
+  background-color: var(--tertiary-dark) !important;
+}
+.react-select__indicator{
+  cursor: pointer !important;
+  color: var(--tertiary-dark) !important;
+}
+.react-select__indicator:hover{
+  color: var(--secondary-light) !important;
+}
+.react-select__indicator-separator {
+  background-color: var(--tertiary-dark) !important;
+}
+.react-select__placeholder, .react-select__single-value {
+  font-size: 0.9rem !important;
+  font-weight: 500;
+  color: var(--secondary-light) !important;
 }
