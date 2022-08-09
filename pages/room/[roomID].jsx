@@ -185,7 +185,7 @@ const Post = () => {
             <MdPlayCircle/> Run Code
           </button>
         </div>
-        <div className={styles.video_wrapper} name-attr={`${name} (You)`}>
+        <div className={styles.video_wrapper} name-attr={name}>
           <video className={styles.video} muted ref={userVideo} autoPlay playsInline/>
         </div>
         {peer && <div className={styles.video_wrapper} name-attr={peer.peerName}>
