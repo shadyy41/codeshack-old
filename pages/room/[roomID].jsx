@@ -61,20 +61,20 @@ const Post = () => {
     socketRef.current = io.connect("ws://localhost:3001");
 
     navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
-      socketRef.current.emit("join_room", roomID)
+      socketRef.current.emit("join_room", {roomID, userName: name})
       socketRef.current.on("room_full", handleFull)
 
       if(userVideo.current) userVideo.current.srcObject = stream
 
-      socketRef.current.on("peer", peerID=>{
+      socketRef.current.on("peer", ({peerID, peerName})=>{
         const temp = createPeer(peerID, socketRef.current.id, stream)
         peerRef.current = temp
-        setPeer(temp)
+        setPeer({peer: temp, peerName: peerName})
       })
-      socketRef.current.on("user_joined", payload => {
-        const temp = addPeer(payload.signal, payload.callerID, stream)
+      socketRef.current.on("user_joined", ({signal, callerID, callerName}) => {
+        const temp = addPeer(signal, callerID, stream)
         peerRef.current = temp
-        setPeer(temp)
+        setPeer({peer: temp, peerName: callerName})
       })
       socketRef.current.on("receiving_returned_signal", payload => {
         peerRef.current.signal(payload.signal) /* Connection complete */
@@ -85,16 +85,16 @@ const Post = () => {
 
   useEffect(()=>{
     if(peer){
-      peer.on('stream', stream => {
+      peer.peer.on('stream', stream => {
         peerVideo.current.srcObject = stream
       })
-      peer.on('close', () => {
+      peer.peer.on('close', () => {
         setPeer()
-        toast("Peer has left the room",  {duration: 4000})
-        peer.destroy()
+        toast(`${peer.peerName} has left the room`,  {duration: 4000})
+        peer.peer.destroy()
       })
-      peer.on('error', () => {
-        peer.destroy()
+      peer.peer.on('error', () => {
+        peer.peer.destroy()
       })
     }
   }, [peer])
@@ -107,7 +107,7 @@ const Post = () => {
     })
 
     peer.on("signal", signal => {
-      socketRef.current.emit("sending_signal", { userToSignal, callerID, signal })
+      socketRef.current.emit("sending_signal", { userToSignal, callerID, signal, callerName: name })
     })
 
     return peer
@@ -173,7 +173,6 @@ const Post = () => {
     <>
     <main className={styles.wrapper}>
       <div className={styles.panel}>
-        {name}
         <div className={styles.submit}>
           <Select
             defaultValue={selectedLang}
@@ -186,8 +185,12 @@ const Post = () => {
             <MdPlayCircle/> Run Code
           </button>
         </div>
-        <video className={styles.video} muted ref={userVideo} autoPlay playsInline />
-        {peer && <video className={styles.video} muted ref={peerVideo} autoPlay playsInline/>}
+        <div className={styles.video_wrapper} name-attr={`${name} (You)`}>
+          <video className={styles.video} muted ref={userVideo} autoPlay playsInline/>
+        </div>
+        {peer && <div className={styles.video_wrapper} name-attr={peer.peerName}>
+          <video className={styles.video} muted ref={peerVideo} autoPlay playsInline />
+        </div>}
         <div className={styles.controls}>
           <button className={`${styles.button} ${coff ? styles.danger : styles.normal}`} onClick={handleCamera}>
             {coff ? <MdOutlineVideocamOff/> : <MdOutlineVideocam/>}

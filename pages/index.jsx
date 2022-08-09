@@ -17,7 +17,8 @@ export default function Home() {
     router.replace(`/${room}`)
   }
   const handleName=(value)=>{
-    setName(value)
+    if(!value || value.length===0) setName('Anonymous')
+    else setName(value)
   }
   const handleLength=(value)=>{
     if(lenRef.current) clearTimeout(lenRef.current)

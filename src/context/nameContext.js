@@ -4,7 +4,7 @@ import { useState } from "react"
 const Context = createContext()
 
 export function NameWrapper({ children }) {
-  const NameHook = useState('')
+  const NameHook = useState('Anonymous')
 
   return (
     <Context.Provider value={NameHook}>

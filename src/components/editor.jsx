@@ -9,22 +9,24 @@ import { yCollab } from 'y-codemirror.next'
 import { WebrtcProvider } from 'y-webrtc'
 import styles from "../../styles/component/editor.module.css"
 import { myTheme } from "../utils/myTheme.js"
+import { useNameContext } from '../../src/context/nameContext.js'
+
 
 
 export default function Editor({roomID}) {
   const editor = useRef()
+  const [name, setName] = useNameContext()
 
   useEffect(() => {
     const ydoc = new Y.Doc()
     const provider = new WebrtcProvider(`${roomID}`, ydoc, {password: "Hello"})
     const ytext = ydoc.getText('codemirror')
-
     const undoManager = new Y.UndoManager(ytext)
 
     provider.awareness.setLocalStateField('user', {
-      name: 'anon',
-      color: '#1be7ff',
-      colorLight: '1be7ff33'
+      name: name,
+      color: "#3f8ed0",
+      colorLight: "#3f8ed0",
     })
     const lw = EditorView.lineWrapping
     const state = EditorState.create({

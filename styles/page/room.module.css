@@ -26,8 +26,28 @@
   width: 256px;
   height: 192px;
   background-color: var(--secondary-dark);
-  border-radius: 6px;
+  border-radius: 4px;
 }
+.video_wrapper{
+  position: relative;
+  border: 1px solid var(--secondary-dark);
+  border-radius: 4px;
+}
+.video_wrapper::before{
+  content: attr(name-attr);
+  color: var(--secondary-light);
+  font-size: 0.9rem;
+  font-weight: 500;
+  position: absolute;
+  bottom: 0;
+  text-align: center;
+  padding: 0.2rem;
+  width: 100%;
+  border-radius: 0 0 4px 4px;
+  background: rgb(16,20,28);
+  background: linear-gradient(0deg, rgba(16,20,28,0.7203475140056023) 26%, rgba(16,20,28,0.5130646008403361) 55%, rgba(16,20,28,0) 100%);
+}
+
 .button{
   display: flex;
   height: 48px;
