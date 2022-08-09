@@ -1,5 +1,6 @@
 import { useRouter, Router } from "next/router"
 import { useState, useRef, useEffect } from "react"
+import { useNameContext } from '../../src/context/nameContext.js'
 import io from "socket.io-client"
 import Peer from "simple-peer"
 import styles from "../../styles/page/room.module.css"
@@ -28,6 +29,7 @@ const Post = () => {
   const userVideo = useRef()
   const peerVideo = useRef()
   const peerRef = useRef()
+  const [name, setName] = useNameContext()
 
   const handleFull =()=>{
     toast.error("Room is full",  {duration: 5000})
@@ -171,6 +173,7 @@ const Post = () => {
     <>
     <main className={styles.wrapper}>
       <div className={styles.panel}>
+        {name}
         <div className={styles.submit}>
           <Select
             defaultValue={selectedLang}

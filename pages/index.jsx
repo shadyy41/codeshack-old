@@ -3,12 +3,30 @@ import styles from "../styles/page/index.module.css"
 import {v4 as uuid} from "uuid"
 import {useRouter} from 'next/router'
 import { MdArrowForward } from "react-icons/md"
+import { useNameContext } from '../src/context/nameContext'
+import toast from "react-hot-toast"
+import { useRef } from 'react'
 
 export default function Home() {
+  const [name, setName] = useNameContext()
   const router = useRouter()
+  const lenRef = useRef()
+
   const createRoom=()=>{
     const room = "room/" + uuid()
-    router.push(`/${room}`)
+    router.replace(`/${room}`)
+  }
+  const handleName=(value)=>{
+    setName(value)
+  }
+  const handleLength=(value)=>{
+    if(lenRef.current) clearTimeout(lenRef.current)
+    lenRef.current = setTimeout(()=>{
+      if(value.length>=15){
+        toast.dismiss()
+        toast.error("Name cannot contain more than 15 characters",  {duration: 1500})
+      }
+    }, 250)
   }
 
   return (
@@ -21,7 +39,7 @@ export default function Home() {
           Conduct coding interviews or practice with friends
         </p>
         <div className={styles.room_form}>
-          <input type="text" name="room_name" id="room_name" placeholder='Enter a name for your room'/>
+          <input type="text" name="room_name" id="room_name" placeholder='Enter your name' onChange={(e)=>handleName(e.target.value)} onBeforeInput={(e)=>handleLength(e.target.value)} maxLength="15"/>
           <button onClick={createRoom}>
             Create Room <MdArrowForward size={18}/>
           </button>
