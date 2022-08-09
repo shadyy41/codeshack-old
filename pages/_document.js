@@ -15,7 +15,7 @@ class MyDocument extends Document {
                 </head>
                 <body>
                 <div id={'globalLoader'}>
-                     <div className="loader">
+                    <div className="loader">
                         <div/>
                         <div/>
                     </div>
