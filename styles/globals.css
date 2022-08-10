@@ -96,14 +96,14 @@ a:hover{
 }
 /* React Select Styles */
 .react-select-container{
-  flex: 1 1 0;
+  width: 10rem;
 }
 .react-select__control--is-focused{
   box-shadow: 0 0 0 2px var(--primary-accent) !important;
 }
 .react-select__control {
   background-color: var(--primary-dark) !important;
-  border-color: var(--tertiary-dark) !important;
+  border-color: var(--secondary-dark) !important;
   transition: none !important;
   cursor: pointer !important;
   color: white !important;

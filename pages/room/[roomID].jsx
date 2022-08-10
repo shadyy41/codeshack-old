@@ -4,27 +4,18 @@ import { useNameContext } from '../../src/context/nameContext.js'
 import io from "socket.io-client"
 import Peer from "simple-peer"
 import styles from "../../styles/page/room.module.css"
-import {MdCallEnd, MdOutlineVideocam, MdOutlineVideocamOff, MdMic, MdMicOff, MdOutlineShare, MdPlayCircle} from "react-icons/md"
+import {MdCallEnd, MdOutlineVideocam, MdOutlineVideocamOff, MdMic, MdMicOff, MdOutlineShare} from "react-icons/md"
 import toast from "react-hot-toast"
 import {CopyToClipboard} from "react-copy-to-clipboard"
 import Editor from "../../src/components/editor"
-import Select from 'react-select'
-
-const languages = [
-  { value: 'cpp', label: 'C++' },
-  { value: 'js', label: 'JavaScript' },
-  { value: 'java', label: 'Java' },
-]
-
 
 const Post = () => {
   const router = useRouter()
   const [peer, setPeer] = useState()
-  const [muted, setMuted] = useState(false)
-  const [coff, setCoff] = useState(false)
+  const [muted, setMuted] = useState(true)
+  const [coff, setCoff] = useState(true)
   const [link, setLink] = useState('')
   const [rID, setRID] = useState('')
-  const [selectedLang, setSelectedLang] = useState(languages[0])
   const socketRef = useRef()
   const userVideo = useRef()
   const peerVideo = useRef()
@@ -36,6 +27,11 @@ const Post = () => {
     router.replace("/")
   }
 
+  const noPerms =()=>{
+    toast.error("Cannot join a room without media device permissions",  {duration: 5000})
+    router.replace("/")
+  }
+
   useEffect(()=>{
     const handleRouteChange = (url, { shallow }) => {
       userVideo?.current?.srcObject?.getTracks().forEach(function(track) {
@@ -43,6 +39,7 @@ const Post = () => {
       })
       socketRef?.current?.disconnect()
       peerRef?.current?.destroy()
+      setName("Anonymous")
     }
 
     router.events.on('routeChangeStart', handleRouteChange)
@@ -56,15 +53,20 @@ const Post = () => {
   useEffect(() => {
     if(!router.isReady) return
     const {roomID} = router.query
-    setRID(roomID)
 
     socketRef.current = io.connect("ws://localhost:3001");
 
+    const tid = toast.loading("Waiting for media streams", {duration: Infinity})
     navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
       socketRef.current.emit("join_room", {roomID, userName: name})
       socketRef.current.on("room_full", handleFull)
-
-      if(userVideo.current) userVideo.current.srcObject = stream
+      toast.dismiss(tid)
+      setRID(roomID)
+      
+      stream.getTracks().forEach(function(track) {
+        track.enabled = false
+      })
+      userVideo.current.srcObject = stream
 
       socketRef.current.on("peer", ({peerID, peerName})=>{
         const temp = createPeer(peerID, socketRef.current.id, stream)
@@ -79,6 +81,9 @@ const Post = () => {
       socketRef.current.on("receiving_returned_signal", payload => {
         peerRef.current.signal(payload.signal) /* Connection complete */
       })
+    }).catch(e=>{//User didn't give AV perms
+      toast.dismiss(tid)
+      noPerms()
     })
 
   }, [router.isReady]);
@@ -90,6 +95,7 @@ const Post = () => {
       })
       peer.peer.on('close', () => {
         setPeer()
+        peerRef.current = null
         toast(`${peer.peerName} has left the room`,  {duration: 4000})
         peer.peer.destroy()
       })
@@ -173,18 +179,6 @@ const Post = () => {
     <>
     <main className={styles.wrapper}>
       <div className={styles.panel}>
-        <div className={styles.submit}>
-          <Select
-            defaultValue={selectedLang}
-            onChange={setSelectedLang}
-            options={languages}
-            className="react-select-container"
-            classNamePrefix="react-select"
-          />
-          <button className={`${styles.submit_button}`}>
-            <MdPlayCircle/> Run Code
-          </button>
-        </div>
         <div className={styles.video_wrapper} name-attr={name}>
           <video className={styles.video} muted ref={userVideo} autoPlay playsInline/>
         </div>
@@ -208,7 +202,9 @@ const Post = () => {
           </button>
         </div>
       </div>
-      {rID && <Editor roomID={rID}/>}
+      <div className={styles.editor}>
+        {rID && <Editor roomID={rID} peer={peerRef.current} peerName={peer?.peerName}/>} 
+      </div>
     </main>
     </>
   )

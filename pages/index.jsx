@@ -42,7 +42,7 @@ export default function Home() {
         <div className={styles.room_form}>
           <input type="text" name="room_name" id="room_name" placeholder='Enter your name' onChange={(e)=>handleName(e.target.value)} onBeforeInput={(e)=>handleLength(e.target.value)} maxLength="15"/>
           <button onClick={createRoom}>
-            Create Room <MdArrowForward size={18}/>
+            Create Room <MdArrowForward/>
           </button>
         </div>
       </article>
