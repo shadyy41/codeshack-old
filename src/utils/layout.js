@@ -7,7 +7,7 @@ export default function Layout({ children }) {
     <>
       <main className={styles.wrapper}>
         {nav && <Navbar />}
-        <div className={styles.children}>{children}</div>
+        <div className={`${nav ? styles.children : styles.orphan}`}>{children}</div>
       </main>
     </>
   )

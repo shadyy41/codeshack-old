@@ -1,6 +1,6 @@
 .wrapper{
+  flex-grow: 1;
   height: 100%;
-  width: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -9,9 +9,8 @@
   justify-content: space-between;
   width: 100%;
   gap: 1rem;
-  flex-shrink: 0;
   border-bottom: 1px solid var(--secondary-dark);
-  padding: 1rem;
+  padding: 0.7rem;
 }
 .submit_button{
   display: flex;
@@ -40,14 +39,33 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--tertiary-dark);
+  color: var(--secondary-light);
   font-size: 1.5rem;
   border-radius: 4px;
   transition: color 200ms ease-in-out;
 }
 .fullscreen:hover{
-  color: var(--secondary-light);
+  color: var(--primary-light);
+}
+.editors{
+  display: flex;
+  flex-grow: 1;
+  max-height: calc(100% - 61.39px);
+  width: 100%;
 }
 .editor{
-  flex-grow: 1;
+  height: 100%;
+  width: 70%;
+}
+.io{
+  height: 100%;
+  border-left: 1px solid var(--secondary-dark);
+  width: 30%;
+}
+.input{
+  height: 50%;
+  width: 100%;
+}
+.input:last-of-type{
+  border-top: 1px solid var(--secondary-dark);
 }

@@ -95,5 +95,14 @@
   }
 }
 @media screen and (max-width: 566px) {
-  
+  .video{
+    width: 90%;
+  }
+  .room_form{
+    padding: 0;
+    gap: 2rem;
+  }
+  .wrapper{
+    gap: 1rem;
+  }
 }

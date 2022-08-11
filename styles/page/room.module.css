@@ -1,15 +1,11 @@
 .wrapper{
   height: 100%;
-  overflow-y: auto;
   width: 100%;
+  min-width: 768px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
   border-top: 1px solid var(--secondary-dark);
-  background-image: linear-gradient(
-    to bottom, transparent, transparent, var(--primary-dark), var(--primary-dark), var(--primary-dark)
-  ), url('/back.svg');
-  background-position: bottom;
 }
 .editor{
   flex-grow: 1;
@@ -21,16 +17,54 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  padding: 1rem;
   flex-shrink: 0;
-  max-width: 300px;
+  width: 300px;
+}
+.collapse{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  color: var(--tertiary-dark);
+  padding: 0.7rem;
+  border-bottom: 1px solid var(--secondary-dark);
+  flex-shrink: 0;
+}
+.collapsed{
+  width: 212px;
+}
+.collapse_button{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  height: 38px;
+  color: var(--secondary-light);
+  font-size: 1rem;
+  border-radius: 4px;
+  transition: color 200ms ease-in-out;
+}
+.collapse_button:hover{
+  color: var(--primary-light);
 }
 .controls{
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-top: 1px solid var(--secondary-dark);
+  padding: 0.7rem;
+  flex-shrink: 0;
+}
+.videos{
+  flex-grow: 1;
+  padding: 0.7rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
 }
 .video{
   display: block;
@@ -54,7 +88,7 @@
   padding: 0.2rem;
   width: 100%;
   border-radius: 0 0 4px 4px;
-  background: rgb(16,20,28);
+  background: #10141c30;
   background: linear-gradient(0deg, rgba(16,20,28,0.7203475140056023) 26%, rgba(16,20,28,0.5130646008403361) 55%, rgba(16,20,28,0) 100%);
 }
 
@@ -71,7 +105,9 @@
   transition: background-color 200ms ease-in-out, color 200ms ease-in-out;
   border: none;
 }
-
+.collapsed .wide{
+  height: 38px;
+}
 .wide{
   width: 64px;
   border-radius: 16px;

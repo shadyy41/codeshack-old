@@ -4,10 +4,11 @@ import { useNameContext } from '../../src/context/nameContext.js'
 import io from "socket.io-client"
 import Peer from "simple-peer"
 import styles from "../../styles/page/room.module.css"
-import {MdCallEnd, MdOutlineVideocam, MdOutlineVideocamOff, MdMic, MdMicOff, MdOutlineShare} from "react-icons/md"
+import {MdCallEnd, MdOutlineVideocam, MdOutlineVideocamOff, MdMic, MdMicOff, MdOutlineShare, MdArrowBack} from "react-icons/md"
 import toast from "react-hot-toast"
 import {CopyToClipboard} from "react-copy-to-clipboard"
 import Editor from "../../src/components/editor"
+import {CgArrowLongLeft, CgArrowLongRight} from "react-icons/cg"
 
 const Post = () => {
   const router = useRouter()
@@ -21,6 +22,7 @@ const Post = () => {
   const peerVideo = useRef()
   const peerRef = useRef()
   const [name, setName] = useNameContext()
+  const [collapsed, setCollapsed] = useState(false)
 
   const handleFull =()=>{
     toast.error("Room is full",  {duration: 5000})
@@ -56,7 +58,7 @@ const Post = () => {
     if(!router.isReady) return
     const {roomID} = router.query
 
-    socketRef.current = io.connect("ws://localhost:3001");
+    socketRef.current = io.connect("ws://codeshack-signalling-server.herokuapp.com");
 
     const tid = toast.loading("Waiting for media streams", {duration: Infinity})
     navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
@@ -175,18 +177,31 @@ const Post = () => {
   const handleShare = ()=>{
     toast.success("Copied To Clipboard")
   }
-
+  const handleCollapse=()=>{
+    const old = collapsed
+    setCollapsed(!old)
+  }
   /* Remove peer muted option */
   return (
     <>
     <main className={styles.wrapper}>
-      <div className={styles.panel}>
-        <div className={styles.video_wrapper} name-attr={name}>
-          <video className={styles.video} muted ref={userVideo} autoPlay playsInline/>
+      <div className={`${styles.panel} ${collapsed ? styles.collapsed : ''}`}>
+        <div className={styles.collapse}>
+          <button onClick={handleCollapse} className={styles.collapse_button}>
+            {collapsed ? <CgArrowLongRight size={32}/> : <CgArrowLongLeft size={32}/>}
+          </button>
+          {collapsed && <button className={`${styles.button} ${styles.danger} ${styles.wide}`} onClick={handleLeave}>
+            <MdCallEnd/>
+          </button>}
         </div>
-        {peer && <div className={styles.video_wrapper} name-attr={peer.peerName}>
-          <video className={styles.video} muted ref={peerVideo} autoPlay playsInline />
+        <div className={styles.videos}>
+          <div className={styles.video_wrapper} name-attr={name}>
+            <video className={styles.video} muted ref={userVideo} autoPlay playsInline/>
+          </div>
+          {peer && <div className={styles.video_wrapper} name-attr={peer.peerName}>
+            <video className={styles.video} muted ref={peerVideo} autoPlay playsInline />
         </div>}
+        </div>
         <div className={styles.controls}>
           <button className={`${styles.button} ${coff ? styles.danger : styles.normal}`} onClick={handleCamera}>
             {coff ? <MdOutlineVideocamOff/> : <MdOutlineVideocam/>}
@@ -199,14 +214,12 @@ const Post = () => {
               <MdOutlineShare/>
             </button>
           </CopyToClipboard>
-          <button className={`${styles.button} ${styles.danger} ${styles.wide}`} onClick={handleLeave}>
+          {!collapsed && <button className={`${styles.button} ${styles.danger} ${styles.wide}`} onClick={handleLeave}>
             <MdCallEnd/>
-          </button>
+          </button>}
         </div>
       </div>
-      <div className={styles.editor}>
-        {rID && <Editor roomID={rID} peer={peerRef.current} peerName={peer?.peerName}/>} 
-      </div>
+      {rID && <Editor roomID={rID} peer={peerRef.current} peerName={peer?.peerName}/>} 
     </main>
     </>
   )
