@@ -14,7 +14,7 @@ const myThemeEditor = EditorView.theme({
     fontSize: "1rem"
   },
   ".cm-content": {
-    fontFamily: "monalisa"
+    fontFamily: "monospace"
   },
   "&.cm-focused .cm-cursor": {
     borderLeftColor: "#FFFFFF",
