@@ -7,7 +7,6 @@ class MyDocument extends Document {
         return (
             <Html>
                 <Head>
-                    <link rel="preload" href="/MonoLisa-Regular.otf" as="font" crossOrigin="anonymous" />
                     <style>
                         {loader}
                     </style>
