@@ -8,6 +8,7 @@
   width: 100%;
   max-width: 1920px;
   margin: auto;
+  flex-shrink: 0;
 }
 .right{
   display: flex;

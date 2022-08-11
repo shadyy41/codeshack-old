@@ -6,6 +6,7 @@ import { MdArrowForward } from "react-icons/md"
 import { useNameContext } from '../src/context/nameContext'
 import toast from "react-hot-toast"
 import { useRef } from 'react'
+import Head from 'next/head'
 
 export default function Home() {
   const [name, setName] = useNameContext()
@@ -31,26 +32,31 @@ export default function Home() {
   }
 
   return (
-    <main className={styles.wrapper}>
-      <article className={styles.content}>
-        <h1>
-          Video Calls &amp; Collaborative Coding
-        </h1>
-        <p>
-          Conduct coding interviews or practice with friends
-        </p>
-        <div className={styles.room_form}>
-          <input type="text" name="room_name" id="room_name" placeholder='Enter your name' onChange={(e)=>handleName(e.target.value)} onBeforeInput={(e)=>handleLength(e.target.value)} maxLength="15"/>
-          <button onClick={createRoom}>
-            Create Room <MdArrowForward/>
-          </button>
+    <>
+      <Head>
+        <title>CodeShack</title>
+      </Head>
+      <main className={styles.wrapper}>
+        <article className={styles.content}>
+          <h1>
+            Video Calls &amp; Collaborative Coding
+          </h1>
+          <p>
+            Conduct coding interviews or practice with friends
+          </p>
+          <div className={styles.room_form}>
+            <input type="text" name="room_name" id="room_name" placeholder='Enter your name' onChange={(e)=>handleName(e.target.value)} onBeforeInput={(e)=>handleLength(e.target.value)} maxLength="15"/>
+            <button onClick={createRoom}>
+              Create Room <MdArrowForward/>
+            </button>
+          </div>
+        </article>
+        <div className={styles.image}>
+          <div className={styles.image_container}>
+            <Image layout="fill" src={'https://kutty.netlify.app/hero.jpg'}/>
+          </div>
         </div>
-      </article>
-      <div className={styles.image}>
-        <div className={styles.image_container}>
-          <Image layout="fill" src={'https://kutty.netlify.app/hero.jpg'}/>
-        </div>
-      </div>
     </main>
+    </>
   )
 }

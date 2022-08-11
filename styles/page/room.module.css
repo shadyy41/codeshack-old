@@ -6,10 +6,15 @@
   align-items: center;
   justify-content: flex-start;
   border-top: 1px solid var(--secondary-dark);
+  background-image: linear-gradient(
+    to bottom, transparent, transparent, var(--primary-dark), var(--primary-dark), var(--primary-dark)
+  ), url('/back.svg');
+  background-position: bottom;
 }
 .editor{
   flex-grow: 1;
   height: 100%;
+  background-color: var(--primary-dark);
 }
 .panel{
   border-right: 1px solid var(--secondary-dark);
@@ -19,6 +24,7 @@
   gap: 1rem;
   padding: 1rem;
   flex-shrink: 0;
+  max-width: 300px;
 }
 .controls{
   width: 100%;
@@ -28,12 +34,11 @@
 }
 .video{
   display: block;
-  width: 256px;
-  height: 192px;
+  aspect-ratio: 4 / 3;
   background-color: var(--secondary-dark);
   border-radius: 4px;
 }
-.video_wrapper{
+.video_wrapper{/* only need for pseudo element*/
   position: relative;
   border: 1px solid var(--secondary-dark);
   border-radius: 4px;

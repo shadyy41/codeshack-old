@@ -28,7 +28,7 @@ const Post = () => {
   }
 
   const noPerms =()=>{
-    toast.error("Cannot join a room without media device permissions",  {duration: 5000})
+    toast.error("Cannot join a room without media permissions",  {duration: 5000})
     router.replace("/")
   }
 
@@ -43,8 +43,10 @@ const Post = () => {
     }
 
     router.events.on('routeChangeStart', handleRouteChange)
-    const url = window.location.href
-    setLink(url)
+    const room = window.location.pathname.substring(6)
+    const prot = window.location.protocol
+    const host = window.location.host
+    setLink(`${prot}//${host}/room/lobby/${room}`)
     return () => {
       router.events.off('routeChangeStart', handleRouteChange)
     }
