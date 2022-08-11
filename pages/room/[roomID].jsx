@@ -58,7 +58,7 @@ const Post = () => {
     if(!router.isReady) return
     const {roomID} = router.query
 
-    socketRef.current = io.connect("ws://codeshack-signalling-server.herokuapp.com");
+    socketRef.current = io.connect("ws://codeshack-signalling-server.herokuapp.com")
 
     const tid = toast.loading("Waiting for media streams", {duration: Infinity})
     navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
