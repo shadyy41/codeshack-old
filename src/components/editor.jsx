@@ -45,14 +45,6 @@ export default function Editor({roomID, peer, peerName}) {
     if(old) setNav(false)
     else setNav(true)
   }
-  const getCode=(lines)=>{
-    let res = ""
-    for(let line of lines){
-      res += line
-      res += "\n"
-    }
-    return res
-  }
   const create = async(source_code, value, input)=>{
     const res = await axios.post('https://api.paiza.io/runners/create', {
       api_key: "guest",
@@ -85,10 +77,8 @@ export default function Editor({roomID, peer, peerName}) {
   const handleRun  =async({value})=>{
     if(submitted) return
     setSubmitted(true)
-    const lines = viewRef.current.state.doc.text
-    const inputLines = inputViewRef.current.state.doc.text
-    const source_code = getCode(lines)
-    const input = getCode(inputLines)
+    const source_code = viewRef.current.state.doc.toString()
+    const input = inputViewRef.current.state.doc.toString()
     if(connected){
       peer.send(JSON.stringify({code: "running_code"}))
     }
