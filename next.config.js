@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
   images:{
-    domains: ['kutty.netlify.app']
+    domains: ['i.imgur.com']
   }
 }
 

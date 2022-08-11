@@ -45,9 +45,9 @@
   position: relative;
   overflow: hidden;
 
-  -webkit-box-shadow: 0px 0px 36px 0px #3f8fd05c;
-  -moz-box-shadow: 0px 0px 36px 0px #3f8fd05c;
-  box-shadow: 0px 0px 36px 0px #3f8fd05c;
+  -webkit-box-shadow: 0px 0px 36px 0px #3f8fd033;
+  -moz-box-shadow: 0px 0px 36px 0px #3f8fd033;
+  box-shadow: 0px 0px 36px 0px #3f8fd033;
 }
 .room_form{
   display: flex;

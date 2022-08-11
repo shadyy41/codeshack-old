@@ -53,7 +53,7 @@ export default function Home() {
         </article>
         <div className={styles.image}>
           <div className={styles.image_container}>
-            <Image layout="fill" src={'https://kutty.netlify.app/hero.jpg'} alt="App screenshot"/>
+            <Image layout="fill" src={'https://i.imgur.com/A0gYlSw.png'} alt="App screenshot"/>
           </div>
         </div>
     </main>
