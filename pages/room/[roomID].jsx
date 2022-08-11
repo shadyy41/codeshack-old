@@ -9,6 +9,7 @@ import toast from "react-hot-toast"
 import {CopyToClipboard} from "react-copy-to-clipboard"
 import Editor from "../../src/components/editor"
 import {CgArrowLongLeft, CgArrowLongRight} from "react-icons/cg"
+import Head from "next/head.js"
 
 const Post = () => {
   const router = useRouter()
@@ -184,43 +185,46 @@ const Post = () => {
   /* Remove peer muted option */
   return (
     <>
-    <main className={styles.wrapper}>
-      <div className={`${styles.panel} ${collapsed ? styles.collapsed : ''}`}>
-        <div className={styles.collapse}>
-          <button onClick={handleCollapse} className={styles.collapse_button}>
-            {collapsed ? <CgArrowLongRight size={32}/> : <CgArrowLongLeft size={32}/>}
-          </button>
-          {collapsed && <button className={`${styles.button} ${styles.danger} ${styles.wide}`} onClick={handleLeave}>
-            <MdCallEnd/>
-          </button>}
-        </div>
-        <div className={styles.videos}>
-          <div className={styles.video_wrapper} name-attr={name}>
-            <video className={styles.video} muted ref={userVideo} autoPlay playsInline/>
-          </div>
-          {peer && <div className={styles.video_wrapper} name-attr={peer.peerName}>
-            <video className={styles.video} muted ref={peerVideo} autoPlay playsInline />
-        </div>}
-        </div>
-        <div className={styles.controls}>
-          <button className={`${styles.button} ${coff ? styles.danger : styles.normal}`} onClick={handleCamera}>
-            {coff ? <MdOutlineVideocamOff/> : <MdOutlineVideocam/>}
-          </button>
-          <button className={`${styles.button} ${muted ? styles.danger : styles.normal}`} onClick={handleMic}>
-            {muted ? <MdMicOff/> : <MdMic/>}
-          </button>
-          <CopyToClipboard text={link} onCopy={handleShare}>
-            <button className={`${styles.button} ${styles.normal}`}>
-              <MdOutlineShare/>
+     <Head>
+      <title>CodeShack - Room</title>
+     </Head>
+     <main className={styles.wrapper}>
+        <div className={`${styles.panel} ${collapsed ? styles.collapsed : ''}`}>
+          <div className={styles.collapse}>
+            <button onClick={handleCollapse} className={styles.collapse_button}>
+              {collapsed ? <CgArrowLongRight size={32}/> : <CgArrowLongLeft size={32}/>}
             </button>
-          </CopyToClipboard>
-          {!collapsed && <button className={`${styles.button} ${styles.danger} ${styles.wide}`} onClick={handleLeave}>
-            <MdCallEnd/>
-          </button>}
+            {collapsed && <button className={`${styles.button} ${styles.danger} ${styles.wide}`} onClick={handleLeave}>
+              <MdCallEnd/>
+            </button>}
+          </div>
+          <div className={styles.videos}>
+            <div className={styles.video_wrapper} name-attr={name}>
+              <video className={styles.video} muted ref={userVideo} autoPlay playsInline/>
+            </div>
+            {peer && <div className={styles.video_wrapper} name-attr={peer.peerName}>
+              <video className={styles.video} muted ref={peerVideo} autoPlay playsInline />
+          </div>}
+          </div>
+          <div className={styles.controls}>
+            <button className={`${styles.button} ${coff ? styles.danger : styles.normal}`} onClick={handleCamera}>
+              {coff ? <MdOutlineVideocamOff/> : <MdOutlineVideocam/>}
+            </button>
+            <button className={`${styles.button} ${muted ? styles.danger : styles.normal}`} onClick={handleMic}>
+              {muted ? <MdMicOff/> : <MdMic/>}
+            </button>
+            <CopyToClipboard text={link} onCopy={handleShare}>
+              <button className={`${styles.button} ${styles.normal}`}>
+                <MdOutlineShare/>
+              </button>
+            </CopyToClipboard>
+            {!collapsed && <button className={`${styles.button} ${styles.danger} ${styles.wide}`} onClick={handleLeave}>
+              <MdCallEnd/>
+            </button>}
+          </div>
         </div>
-      </div>
-      {rID && <Editor roomID={rID} peer={peerRef.current} peerName={peer?.peerName}/>} 
-    </main>
+        {rID && <Editor roomID={rID} peer={peerRef.current} peerName={peer?.peerName}/>} 
+      </main>
     </>
   )
 }
