@@ -6,13 +6,12 @@ class MyDocument extends Document {
     render() {
         return (
             <Html>
-                <Head/>
-                <head>
+                <Head>
                     <link rel="preload" href="/MonoLisa-Regular.otf" as="font" crossOrigin="anonymous" />
                     <style>
                         {loader}
                     </style>
-                </head>
+                </Head>
                 <body>
                 <div id={'globalLoader'}>
                     <div className="loader">

@@ -6,7 +6,7 @@ import { MdArrowForward } from "react-icons/md"
 
 import styles from "../../../styles/page/lobby.module.css"
 
-const roomID = ()=>{
+const Lobby = ()=>{
   const router = useRouter()
   const userVideo = useRef()
   const lenRef = useRef()
@@ -82,5 +82,5 @@ const roomID = ()=>{
   )
 }
 
-export default roomID
+export default Lobby
 
