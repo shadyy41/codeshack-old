@@ -74,12 +74,12 @@ const Post = () => {
       userVideo.current.srcObject = stream
 
       socketRef.current.on("peer", ({peerID, peerName})=>{
-        const temp = createPeer(peerID, socketRef.current.id, stream)
+        const temp = createPeer(peerID, socketRef.current.id)
         peerRef.current = temp
         setPeer({peer: temp, peerName: peerName})
       })
       socketRef.current.on("user_joined", ({signal, callerID, callerName}) => {
-        const temp = addPeer(signal, callerID, stream)
+        const temp = addPeer(signal, callerID)
         peerRef.current = temp
         setPeer({peer: temp, peerName: callerName})
       })
@@ -94,27 +94,27 @@ const Post = () => {
   }, [router.isReady]);
 
   useEffect(()=>{
-    if(peer){
-      peer.peer.on('stream', stream => {
+    if(peerRef.current){
+      peerRef.current.on('stream', stream => {
+        console.log(stream)
         peerVideo.current.srcObject = stream
       })
-      peer.peer.on('close', () => {
+      peerRef.current.on('close', () => {
         setPeer()
         peerRef.current = null
         toast(`${peer.peerName} has left the room`,  {duration: 4000})
         peer.peer.destroy()
       })
-      peer.peer.on('error', () => {
+      peerRef.current.on('error', () => {
         peer.peer.destroy()
       })
     }
-  }, [peer])
+  }, [peerRef.current])
 
-  function createPeer(userToSignal, callerID, stream) {
+  function createPeer(userToSignal, callerID) {
     const peer = new Peer({
       initiator: true,
-      trickle: false,
-      stream
+      stream: userVideo.current.srcObject
     })
 
     peer.on("signal", signal => {
@@ -123,11 +123,10 @@ const Post = () => {
 
     return peer
   }
-  function addPeer(incomingSignal, callerID, stream) {
+  function addPeer(incomingSignal, callerID) {
     const peer = new Peer({
       initiator: false,
-      trickle: false,
-      stream,
+      stream: userVideo.current.srcObject
     })
 
     peer.on("signal", signal => {
