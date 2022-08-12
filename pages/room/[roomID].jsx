@@ -94,26 +94,26 @@ const Post = () => {
   }, [router.isReady]);
 
   useEffect(()=>{
-    if(peerRef.current){
-      peerRef.current.on('stream', stream => {
-        console.log(stream)
+    if(peer){
+      peer.peer.on('stream', stream => {
         peerVideo.current.srcObject = stream
       })
-      peerRef.current.on('close', () => {
+      peer.peer.on('close', () => {
         setPeer()
         peerRef.current = null
         toast(`${peer.peerName} has left the room`,  {duration: 4000})
         peer.peer.destroy()
       })
-      peerRef.current.on('error', () => {
+      peer.peer.on('error', () => {
         peer.peer.destroy()
       })
     }
-  }, [peerRef.current])
+  }, [peer])
 
   function createPeer(userToSignal, callerID) {
     const peer = new Peer({
       initiator: true,
+      trickle: false,
       stream: userVideo.current.srcObject
     })
 
@@ -126,6 +126,7 @@ const Post = () => {
   function addPeer(incomingSignal, callerID) {
     const peer = new Peer({
       initiator: false,
+      trickle: false,
       stream: userVideo.current.srcObject
     })
 
