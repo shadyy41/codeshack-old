@@ -182,7 +182,6 @@ const Post = () => {
     const old = collapsed
     setCollapsed(!old)
   }
-  /* Remove peer muted option */
   return (
     <>
      <Head>
@@ -203,7 +202,7 @@ const Post = () => {
               <video className={styles.video} muted ref={userVideo} autoPlay playsInline/>
             </div>
             {peer && <div className={styles.video_wrapper} name-attr={peer.peerName}>
-              <video className={styles.video} muted ref={peerVideo} autoPlay playsInline />
+              <video className={styles.video} ref={peerVideo} autoPlay playsInline />
           </div>}
           </div>
           <div className={styles.controls}>
