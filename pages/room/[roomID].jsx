@@ -4,11 +4,10 @@ import { useNameContext } from '../../src/context/nameContext.js'
 import io from "socket.io-client"
 import Peer from "simple-peer"
 import styles from "../../styles/page/room.module.css"
-import {MdCallEnd, MdOutlineVideocam, MdOutlineVideocamOff, MdMic, MdMicOff, MdOutlineShare, MdArrowBack} from "react-icons/md"
+import {MdCallEnd, MdOutlineVideocam, MdOutlineVideocamOff, MdMic, MdMicOff, MdOutlineShare, MdFirstPage, MdLastPage} from "react-icons/md"
 import toast from "react-hot-toast"
 import {CopyToClipboard} from "react-copy-to-clipboard"
 import Editor from "../../src/components/editor"
-import {CgArrowLongLeft, CgArrowLongRight} from "react-icons/cg"
 import Head from "next/head.js"
 import { VideoStreamMerger } from "video-stream-merger"
 
@@ -192,7 +191,7 @@ const Room = () => {
         <div className={`${styles.panel} ${collapsed ? styles.collapsed : ''}`}>
           <div className={styles.collapse}>
             <button onClick={handleCollapse} className={styles.collapse_button}>
-              {collapsed ? <CgArrowLongRight size={32}/> : <CgArrowLongLeft size={32}/>}
+              {collapsed ? <MdLastPage size={28}/> : <MdFirstPage size={28}/>}
             </button>
             {collapsed && <button className={`${styles.button} ${styles.danger} ${styles.wide}`} onClick={handleLeave}>
               <MdCallEnd/>
