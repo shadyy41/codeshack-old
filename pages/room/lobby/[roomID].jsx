@@ -10,14 +10,9 @@ const Lobby = ()=>{
   const router = useRouter()
   const userVideo = useRef()
   const lenRef = useRef()
-  const [rID, setRID] = useState('')
   const roomRef = useRef()
   const [name, setName] = useNameContext()
 
-  const noPerms =()=>{
-    toast.error("Cannot join a room without media permissions",  {duration: 5000})
-    router.replace("/")
-  }
   const handleName=(value)=>{
     if(!value || value.length===0) setName('Anonymous')
     else setName(value)
@@ -40,28 +35,24 @@ const Lobby = ()=>{
     if(!router.isReady) return
     const {roomID} = router.query
     roomRef.current = roomID
-    const tid = toast.loading("Waiting for media streams", {duration: Infinity})
     navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream=>{
-      toast.dismiss(tid)
       userVideo.current.srcObject = stream
     }).catch(e=>{
-      toast.dismiss(tid)
-      noPerms()
     })
-  }, [router.isReady])
+  }, [router.isReady, router.query])
 
   useEffect(()=>{
     const handleRouteChange = (url, { shallow }) => {
-      userVideo?.current?.srcObject?.getTracks().forEach(function(track) {
+      userVideo.current?.srcObject?.getTracks().forEach(function(track) {
         track.stop()
       })
     }
-
     router.events.on('routeChangeStart', handleRouteChange)
+
     return () => {
       router.events.off('routeChangeStart', handleRouteChange)
     }
-  }, [])
+  }, [router.events])
 
   return (
     <main className={styles.wrapper}>

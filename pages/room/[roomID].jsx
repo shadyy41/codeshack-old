@@ -10,42 +10,45 @@ import {CopyToClipboard} from "react-copy-to-clipboard"
 import Editor from "../../src/components/editor"
 import {CgArrowLongLeft, CgArrowLongRight} from "react-icons/cg"
 import Head from "next/head.js"
+import { VideoStreamMerger } from "video-stream-merger"
 
-const Post = () => {
+const Room = () => {
   const router = useRouter()
   const [peer, setPeer] = useState()
   const [muted, setMuted] = useState(true)
   const [coff, setCoff] = useState(true)
   const [link, setLink] = useState('')
   const [rID, setRID] = useState('')
+  const [collapsed, setCollapsed] = useState(false)
   const socketRef = useRef()
   const userVideo = useRef()
   const peerVideo = useRef()
   const peerRef = useRef()
+  const merger = useRef()
+  const userVideoStream = useRef()
+  const userAudioStream = useRef()
   const [name, setName] = useNameContext()
-  const [collapsed, setCollapsed] = useState(false)
-
-  const handleFull =()=>{
-    toast.error("Room is full",  {duration: 5000})
-    router.replace("/")
-  }
-
-  const noPerms =()=>{
-    toast.error("Cannot join a room without media permissions",  {duration: 5000})
-    router.replace("/")
-  }
 
   useEffect(()=>{
-    const handleRouteChange = (url, { shallow }) => {
-      userVideo?.current?.srcObject?.getTracks().forEach(function(track) {
+    const handleRouteChange = () => {
+      userVideoStream.current?.getTracks().forEach(track=>{
         track.stop()
       })
-      socketRef?.current?.disconnect()
-      peerRef?.current?.destroy()
+      userAudioStream.current?.getTracks().forEach(track=>{
+        track.stop()
+      })
+      merger.current?.destroy()
+      socketRef.current?.disconnect()
+      peerRef.current?.destroy()
       setName("Anonymous")
     }
-
     router.events.on('routeChangeStart', handleRouteChange)
+
+    merger.current = new VideoStreamMerger()
+    merger.current.start()
+    merger.current.setOutputSize(800, 600)
+    userVideo.current.srcObject = merger.current.result
+
     const room = window.location.pathname.substring(6)
     const prot = window.location.protocol
     const host = window.location.host
@@ -53,45 +56,67 @@ const Post = () => {
     return () => {
       router.events.off('routeChangeStart', handleRouteChange)
     }
-  }, [])
+  }, [router.events, setName])
 
   useEffect(() => {
     if(!router.isReady) return
     const {roomID} = router.query
+    setRID(roomID)
 
     socketRef.current = io.connect("https://codeshack-signalling-server.herokuapp.com")
 
-    const tid = toast.loading("Waiting for media streams", {duration: Infinity})
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
-      socketRef.current.emit("join_room", {roomID, userName: name})
-      socketRef.current.on("room_full", handleFull)
-      toast.dismiss(tid)
-      setRID(roomID)
-      
-      stream.getTracks().forEach(function(track) {
-        track.enabled = false
-      })
-      userVideo.current.srcObject = stream
+    socketRef.current.emit("join_room", {roomID, userName: name})
+    socketRef.current.on("room_full", handleFull)
 
-      socketRef.current.on("peer", ({peerID, peerName})=>{
-        const temp = createPeer(peerID, socketRef.current.id)
-        peerRef.current = temp
-        setPeer({peer: temp, peerName: peerName})
-      })
-      socketRef.current.on("user_joined", ({signal, callerID, callerName}) => {
-        const temp = addPeer(signal, callerID)
-        peerRef.current = temp
-        setPeer({peer: temp, peerName: callerName})
-      })
-      socketRef.current.on("receiving_returned_signal", payload => {
-        peerRef.current.signal(payload.signal) /* Connection complete */
-      })
-    }).catch(e=>{//User didn't give AV perms
-      toast.dismiss(tid)
-      noPerms()
+    socketRef.current.on("peer", ({peerID, peerName})=>{
+      const temp = createPeer(peerID, socketRef.current.id)
+      peerRef.current = temp
+      setPeer({peer: temp, peerName: peerName})
+    })
+    socketRef.current.on("user_joined", ({signal, callerID, callerName}) => {
+      const temp = addPeer(signal, callerID)
+      peerRef.current = temp
+      setPeer({peer: temp, peerName: callerName})
+    })
+    socketRef.current.on("receiving_returned_signal", payload => {
+      peerRef.current.signal(payload.signal) /* Connection complete */
     })
 
-  }, [router.isReady]);
+    const createPeer=(userToSignal, callerID)=>{
+      const peer = new Peer({
+        initiator: true,
+        trickle: false,
+        stream: merger.current.result
+      })
+  
+      peer.on("signal", signal => {
+        socketRef.current.emit("sending_signal", { userToSignal, callerID, signal, callerName: name })
+      })
+  
+      return peer
+    }
+    const addPeer=(incomingSignal, callerID)=>{
+      const peer = new Peer({
+        initiator: false,
+        trickle: false,
+        stream: merger.current.result
+      })
+  
+      peer.on("signal", signal => {
+        socketRef.current.emit("returning_signal", { signal, callerID })
+      })
+  
+      peer.signal(incomingSignal) /* Receiver has accepted, return to sender */
+  
+      return peer
+    }
+
+    const handleFull =()=>{
+      toast.error("Room is full",  {duration: 5000})
+      router.replace("/")
+    }
+
+  }, [name, router.isReady, router.query, router])
 
   useEffect(()=>{
     if(peer){
@@ -110,46 +135,20 @@ const Post = () => {
     }
   }, [peer])
 
-  function createPeer(userToSignal, callerID) {
-    const peer = new Peer({
-      initiator: true,
-      trickle: false,
-      stream: userVideo.current.srcObject
-    })
-
-    peer.on("signal", signal => {
-      socketRef.current.emit("sending_signal", { userToSignal, callerID, signal, callerName: name })
-    })
-
-    return peer
-  }
-  function addPeer(incomingSignal, callerID) {
-    const peer = new Peer({
-      initiator: false,
-      trickle: false,
-      stream: userVideo.current.srcObject
-    })
-
-    peer.on("signal", signal => {
-      socketRef.current.emit("returning_signal", { signal, callerID })
-    })
-
-    peer.signal(incomingSignal) /* Receiver has accepted, return to sender */
-
-    return peer
-  }
 
   const handleMic = ()=>{
     const old = muted
     const msg = old ? "Mic Enabled" : "Mic Disabled"
     if(old){
-      userVideo.current.srcObject.getTracks().forEach(function(track) {
-        if(track.kind==='audio') track.enabled = true
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(stream=>{
+        userAudioStream.current = stream
+        merger.current.addStream(stream)
       })
     }
     else{
-      userVideo.current.srcObject.getTracks().forEach(function(track) {
-        if(track.kind==='audio') track.enabled = false
+      merger.current.removeStream(userAudioStream.current)
+      userAudioStream.current?.getTracks().forEach(track=>{
+        track.stop()
       })
     }
     toast.success(msg)
@@ -159,13 +158,15 @@ const Post = () => {
     const old = coff
     const msg = old ? "Camera Enabled" : "Camera Disabled"
     if(old){
-      userVideo.current.srcObject.getTracks().forEach(function(track) {
-        if(track.kind==='video') track.enabled = true
+      navigator.mediaDevices.getUserMedia({ video: true }).then(stream=>{
+        userVideoStream.current = stream
+        merger.current.addStream(stream)
       })
     }
     else{
-      userVideo.current.srcObject.getTracks().forEach(function(track) {
-        if(track.kind==='video') track.enabled = false
+      merger.current.removeStream(userVideoStream.current)
+      userVideoStream.current?.getTracks().forEach(track=>{
+        track.stop()
       })
     }
     toast.success(msg)
@@ -228,4 +229,4 @@ const Post = () => {
   )
 }
 
-export default Post
+export default Room
