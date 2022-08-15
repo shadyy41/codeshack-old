@@ -44,10 +44,10 @@
   border-radius: 6px;
   position: relative;
   overflow: hidden;
-
-  -webkit-box-shadow: 0px 0px 36px 0px #3f8fd033;
-  -moz-box-shadow: 0px 0px 36px 0px #3f8fd033;
-  box-shadow: 0px 0px 36px 0px #3f8fd033;
+  border: 1px solid var(--secondary-dark);
+  -webkit-box-shadow: 0px 0px 36px 0px #3f8fd013;
+  -moz-box-shadow: 0px 0px 36px 0px #3f8fd013;
+  box-shadow: 0px 0px 36px 0px #3f8fd013;
 }
 .room_form{
   display: flex;
