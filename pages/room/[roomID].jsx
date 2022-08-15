@@ -139,9 +139,14 @@ const Room = () => {
     const old = muted
     const msg = old ? "Mic Enabled" : "Mic Disabled"
     if(old){
+      const id = toast.loading('Waiting for user media', {duration: Infinity})
       navigator.mediaDevices.getUserMedia({ audio: true }).then(stream=>{
         userAudioStream.current = stream
         merger.current.addStream(stream)
+        toast.success(msg, {id, duration: 3000})
+        setMuted(!old)
+      }).catch(()=>{
+        toast.error("Couldn't enable mic", {id, duration: 3000})
       })
     }
     else{
@@ -149,17 +154,22 @@ const Room = () => {
       userAudioStream.current?.getTracks().forEach(track=>{
         track.stop()
       })
+      toast.success(msg)
+      setMuted(!old)
     }
-    toast.success(msg)
-    setMuted(!old)
   }
   const handleCamera = ()=>{
     const old = coff
     const msg = old ? "Camera Enabled" : "Camera Disabled"
     if(old){
+      const id = toast.loading('Waiting for user media', {duration: Infinity})
       navigator.mediaDevices.getUserMedia({ video: true }).then(stream=>{
         userVideoStream.current = stream
         merger.current.addStream(stream)
+        toast.success(msg, {id, duration: 3000})
+        setCoff(!old)
+      }).catch(()=>{
+        toast.error("Couldn't enable camera", {id, duration: 3000})
       })
     }
     else{
@@ -167,9 +177,9 @@ const Room = () => {
       userVideoStream.current?.getTracks().forEach(track=>{
         track.stop()
       })
+      toast.success(msg)
+      setCoff(!old)
     }
-    toast.success(msg)
-    setCoff(!old)
   }
   const handleLeave = ()=>{
     router.replace('/')

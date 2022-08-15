@@ -35,9 +35,12 @@ const Lobby = ()=>{
     if(!router.isReady) return
     const {roomID} = router.query
     roomRef.current = roomID
+    const id = toast.loading("Waiting for user media", {duration: Infinity})
     navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream=>{
       userVideo.current.srcObject = stream
+      toast.dismiss(id)
     }).catch(e=>{
+      toast.dismiss(id)
     })
   }, [router.isReady, router.query])
 
