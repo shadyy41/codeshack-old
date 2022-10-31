@@ -62,7 +62,7 @@ const Room = () => {
     const {roomID} = router.query
     setRID(roomID)
 
-    socketRef.current = io.connect("https://codeshack-signalling-server.herokuapp.com")
+    socketRef.current = io.connect("https://codeshack-signalling-server.onrender.com")
 
     socketRef.current.emit("join_room", {roomID, userName: name})
     socketRef.current.on("room_full", handleFull)
