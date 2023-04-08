@@ -76,6 +76,7 @@ const Room = () => {
       const temp = addPeer(signal, callerID)
       peerRef.current = temp
       setPeer({peer: temp, peerName: callerName})
+      console.log("User joined")
     })
     socketRef.current.on("receiving_returned_signal", payload => {
       peerRef.current.signal(payload.signal) /* Connection complete */
@@ -84,8 +85,9 @@ const Room = () => {
     const createPeer=(userToSignal, callerID)=>{
       const peer = new Peer({
         initiator: true,
-        trickle: false,
-        stream: merger.current.result
+        trickle: true,
+        stream: merger.current.result,
+        config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] },
       })
   
       peer.on("signal", signal => {
@@ -97,8 +99,9 @@ const Room = () => {
     const addPeer=(incomingSignal, callerID)=>{
       const peer = new Peer({
         initiator: false,
-        trickle: false,
-        stream: merger.current.result
+        trickle: true,
+        stream: merger.current.result,
+        config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] },
       })
   
       peer.on("signal", signal => {
@@ -232,7 +235,7 @@ const Room = () => {
             </button>}
           </div>
         </div>
-        {rID && <Editor roomID={rID} peer={peerRef.current} peerName={peer?.peerName}/>} 
+        {rID && <Editor roomID={rID} peer={peer?.peer} peerName={peer?.peerName}/>} 
       </main>
     </>
   )

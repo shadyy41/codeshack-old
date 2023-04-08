@@ -66,6 +66,7 @@ export default function Editor({roomID, peer, peerName}) {
   }
   const handleLanguage = (lang)=>{
     setSelectedLang(lang)
+    console.log(peer)
     if(connected) peer.send(JSON.stringify({code : "change_lang", lang: lang})) //inform the peer
     let t = cpp
     if(lang.value==='javascript') t = javascript
@@ -148,49 +149,47 @@ export default function Editor({roomID, peer, peerName}) {
         })
       }
     })
-  }, [peer])
-
-  const createState = (rID, suffix, no_lang, read_only)=>{
-    const room = "" + rID + suffix
-    const ydoc = new Y.Doc()
-    const provider = new WebrtcProvider(room, ydoc, {password: "Hello"})
-    const ytext = ydoc.getText('codemirror')
-    const undoManager = new Y.UndoManager(ytext)
-
-    provider.awareness.setLocalStateField('user', {
-      name: name,
-      color: "#3f8ed0",
-      colorLight: "#3f8ed0",
-    })
-    
-    const extensions = [basicSetup, keymap.of(indentWithTab), myTheme, EditorView.lineWrapping, yCollab(ytext, provider.awareness, { undoManager })]
-
-    if(read_only){
-      extensions.push(EditorState.readOnly.of(true))
-    }
-    else if(!no_lang){
-      langCompRef.current = new Compartment
-      extensions.push(langCompRef.current.of(cpp()))
-    }
-    const state = EditorState.create({
-      doc: ytext.toString(),
-      extensions
-    })
-    return state
-  }
+  }, [peer, peerName])
 
   useEffect(() => {
+    const createState = (rID, suffix, no_lang, read_only)=>{
+      const room = "" + rID + suffix
+      const ydoc = new Y.Doc()
+      const provider = new WebrtcProvider(room, ydoc, {password: "Hello"})
+      const ytext = ydoc.getText('codemirror')
+      const undoManager = new Y.UndoManager(ytext)
+  
+      provider.awareness.setLocalStateField('user', {
+        name: name,
+        color: "#3f8ed0",
+        colorLight: "#3f8ed0",
+      })
+      
+      const extensions = [basicSetup, keymap.of(indentWithTab), myTheme, EditorView.lineWrapping, yCollab(ytext, provider.awareness, { undoManager })]
+  
+      if(read_only){
+        extensions.push(EditorState.readOnly.of(true))
+      }
+      else if(!no_lang){
+        langCompRef.current = new Compartment
+        extensions.push(langCompRef.current.of(cpp()))
+      }
+      const state = EditorState.create({
+        doc: ytext.toString(),
+        extensions
+      })
+      return state
+    }
     inputViewRef.current = new EditorView({ state: createState(roomID, "input", true, false), parent: inputRef.current})
     outputViewRef.current = new EditorView({ state: createState(roomID, "output", true, true), parent: outputRef.current})
     viewRef.current = new EditorView({ state: createState(roomID, "", false, false), parent: editor.current})
-
 
     return () => {
       viewRef.current.destroy()
       inputViewRef.current.destroy()
       outputViewRef.current.destroy()
     }
-  }, [])
+  }, [roomID, name])
 
   return (
     <>
